@@ -1,5 +1,5 @@
-import { TuyaOpenApiClient } from '../../core/client';
-import { TuyaResponse } from '../../interfaces';
+import { TuyaOpenApiClient } from "../../core/client";
+import { TuyaResponse } from "../../interfaces";
 
 interface DeviceStatusServiceStatusParam {
   device_id: string;
@@ -22,7 +22,6 @@ interface DeviceStatusServiceStatusListResult {
   }[];
 }
 
-
 class TuyaOpenApiDeviceStatusService {
   private client: TuyaOpenApiClient;
 
@@ -30,25 +29,31 @@ class TuyaOpenApiDeviceStatusService {
     this.client = client;
   }
 
-  async status(param: DeviceStatusServiceStatusParam): Promise<TuyaResponse<DeviceStatusServiceStatusResult>> {
+  async status(
+    param: DeviceStatusServiceStatusParam
+  ): Promise<TuyaResponse<DeviceStatusServiceStatusResult>> {
     const res = await this.client.request<DeviceStatusServiceStatusResult>({
       path: `/v1.0/iot-03/devices/${param.device_id}/status`,
-      method: 'GET',
+      method: "GET",
     });
     return res.data;
   }
 
-  async statusList(param: DeviceStatusServiceStatusListParam): Promise<TuyaResponse<DeviceStatusServiceStatusListResult>> {
+  async statusList(
+    param: DeviceStatusServiceStatusListParam
+  ): Promise<TuyaResponse<DeviceStatusServiceStatusListResult>> {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // Query format is different than the starter code 
+    param = { device_ids: param.device_ids.join(",") };
     const res = await this.client.request<DeviceStatusServiceStatusListResult>({
       path: `/v1.0/iot-03/devices/status`,
-      method: 'GET',
-      query: param
+      method: "GET",
+      query: param,
     });
     return res.data;
   }
 }
 
-export {
-  TuyaOpenApiDeviceStatusService
-}
+export { TuyaOpenApiDeviceStatusService };
 export default TuyaOpenApiDeviceStatusService;

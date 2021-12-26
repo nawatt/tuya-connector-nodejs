@@ -1,4 +1,7 @@
-import { TuyaContext } from '../src';
+import { TuyaContext } from "../src";
+import * as dotenv from "dotenv";
+dotenv.config();
+
 // const { TuyaContext } = require('../lib/index');
 // import { TuyaContext } from '@tuya/tuya-connector-nodejs';
 
@@ -12,9 +15,9 @@ import { TuyaContext } from '../src';
  */
 
 const context = new TuyaContext({
-  baseUrl: '',
-  accessKey: '',
-  secretKey: '',
+  baseUrl: process.env.BASE_URL,
+  accessKey: process.env.ACCESS_KEY,
+  secretKey: process.env.SECRET_KEY,
 });
 
 const main = async () => {
@@ -28,22 +31,45 @@ const main = async () => {
   //   last_row_key,
   // });
   // all api request you can use:
-  const res = await context.request({
+  let res = await context.request({
     path: `/v1.0/iot-02/assets/-1/sub-assets`,
-    method: 'GET',
+    method: "GET",
     query: {
       page_size,
       last_row_key,
-      key1: '支持中文',
-      key2: [{name: 'support'}, {age: 'array'}, {name: 'object'}],
-}
+      key1: "支持中文",
+      key2: [{ name: "support" }, { age: "array" }, { name: "object" }],
+    },
   });
-  if(!res.success) {
+
+  if (!res.success) {
+    new Error();
+  }
+  console.log(JSON.stringify(res.result.list, null, 2));
+
+  //Get Device Details
+  res = await context.device.detail({
+    device_id: process.env.DEVICE_ID01,
+  });
+
+  if (!res.success) {
     new Error();
   }
   console.log(res);
+
+  console.log([process.env.DEVICE_ID01, process.env.DEVICE_ID02]);
+
+  //Get Device Status
+  res = await context.deviceStatus.statusList({
+    device_ids: [process.env.DEVICE_ID01, process.env.DEVICE_ID02],
+  });
+
+  if (!res.success) {
+    new Error();
+  }
+  console.log(JSON.stringify(res, null, 2));
 };
 
-main().catch(err => {
+main().catch((err) => {
   console.log(err);
 });
